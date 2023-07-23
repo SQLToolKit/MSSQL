@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>Troubleshoot T-Log</title>
+</head>
+<body>
+
+<pre style="font-family: Calibri; font-size: 16px; margin:30px 30px 30px 30px">
+<h2>Queries to troubleshoot transaction log issues</h2><hr>  
+
+<b style="font-size: 15px">Check the size of the transaction log:</b><br>
+USE YourDatabaseName; -- Replace 'YourDatabaseName' with the name of your database
+DBCC SQLPERF(LOGSPACE);
+
+
+<b style="font-size: 15px">Check the active transactions and their details:</b><br>
+DBCC OPENTRAN;
+
+
+<b style="font-size: 15px">Check the current log utilization:</b><br>
+USE YourDatabaseName; -- Replace 'YourDatabaseName' with the name of your database
+
+SELECT
+    name AS LogicalFileName,
+    size * 8 / 1024 AS SizeMB,
+    used AS UsedSpaceKB,
+    (size - used) * 8 / 1024 AS FreeSpaceMB
+FROM
+    sys.master_files
+WHERE
+    database_id = DB_ID('YourDatabaseName') 
+    AND type_desc = 'LOG';
+
+
+<b style="font-size: 15px">Check for virtual log file (VLF) fragmentation:</b><br>
+DBCC LOGINFO;
+
+
+<b style="font-size: 15px">Check for autogrowth settings:</b><br>
+USE YourDatabaseName; -- Replace 'YourDatabaseName' with the name of your database
+
+SELECT 
+    name AS LogicalFileName,
+    type_desc AS FileType,
+    growth AS AutoGrowthSetting,
+    is_percent_growth
+FROM 
+    sys.master_files
+WHERE 
+    database_id = DB_ID('YourDatabaseName') 
+    AND type_desc = 'LOG';
+
+    
+<b style="font-size: 15px">Monitor long-running or blocking transactions:</b><br>
+SELECT
+    r.session_id,
+    r.status,
+    r.command,
+    r.blocking_session_id,
+    r.wait_type,
+    r.wait_time,
+    r.last_wait_type,
+    t.text AS [SQLText]
+FROM
+    sys.dm_exec_requests r
+CROSS APPLY
+    sys.dm_exec_sql_text(r.plan_handle) t
+WHERE
+    r.command LIKE 'INSERT%' OR
+    r.command LIKE 'UPDATE%' OR
+    r.command LIKE 'DELETE%' OR
+    r.command LIKE 'SELECT%' -- Adjust as needed for specific operations
+ORDER BY
+    r.wait_time DESC;
+
+</pre>
+</body>
+</html>
