@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AG Gap</title>
+</head>
+<body>
+
+<pre style="font-family: verdana; font-size: 13px; margin:30px 30px 30px 30px">
+<h2>Troubleshoot Alwayson gap issues</h2><hr>
+
+<b style="font-size: 15px">Check gap between primary and secondary replica:</b><br>
+   Replace 'YourDatabaseName' with the name of your database
+    
+   DECLARE @DatabaseName NVARCHAR(128) = 'YourDatabaseName';
+    
+   -- Get the last commit time on the primary replica
+   DECLARE @PrimaryLastCommitTime DATETIME;
+   SELECT @PrimaryLastCommitTime = last_commit_time
+   FROM sys.dm_hadr_database_replica_states
+   WHERE database_id = DB_ID(@DatabaseName) AND is_primary_replica = 1;
+    
+   -- Get the last commit time on each secondary replica
+   SELECT replica_server_name, last_commit_time,
+   DATEDIFF(SECOND, @PrimaryLastCommitTime, last_commit_time) AS SecondsBehindPrimary
+   FROM sys.dm_hadr_database_replica_states
+   WHERE database_id = DB_ID(@DatabaseName) AND is_primary_replica = 0;
+
+
+<b style="font-size: 15px">Check the latency in Alwayson:</b><br>
+
+SELECT 
+    ag.name AS AvailabilityGroupName,
+    r.replica_server_name AS ReplicaServerName,
+    rs.connected_state_desc AS ConnectedState,
+    rs.last_connect_error_number AS LastConnectErrorNumber,
+    rs.last_connect_error_description AS LastConnectErrorDescription,
+    d.name AS DatabaseName,
+    ars.log_send_queue_size AS LogSendQueueSize,
+    ars.log_send_rate AS LogSendRate,
+    ars.redo_queue_size AS RedoQueueSize,
+    ars.redo_rate AS RedoRate,
+    ars.last_commit_time AS LastCommitTime
+FROM 
+    sys.dm_hadr_availability_replica_states ars
+INNER JOIN 
+    sys.availability_replicas r ON ars.replica_id = r.replica_id
+INNER JOIN 
+    sys.availability_groups ag ON r.group_id = ag.group_id
+INNER JOIN 
+    sys.dm_hadr_database_replica_states drs ON ars.replica_id = drs.replica_id
+INNER JOIN 
+    sys.databases d ON drs.database_id = d.database_id
+LEFT JOIN 
+    sys.dm_hadr_connectivity_ring_states rs ON ars.replica_id = rs.replica_id
+WHERE 
+    d.database_id = DB_ID('YourDatabaseName'); -- Replace 'YourDatabaseName' with the name of your database
+
+
+
+<b>The columns in the result set are as follows: </b>
+
+AvailabilityGroupName: The name of the Always On availability group.
+
+ReplicaServerName: The name of the replica server.
+
+ConnectedState: The current connection state of the replica.
+
+LastConnectErrorNumber: The error number of the last connection attempt.
+
+LastConnectErrorDescription: The description of the last connection error.
+
+DatabaseName: The name of the database.
+
+LogSendQueueSize: The log send queue size (in KB) indicating the amount of log records waiting to be sent to the secondary replica.
+
+LogSendRate: The log send rate (in KB/sec) showing the rate at which log records are being sent to the secondary replica.
+
+RedoQueueSize: The redo queue size (in KB) indicating the amount of log records waiting to be applied on the secondary replica.
+
+RedoRate: The redo rate (in KB/sec) showing the rate at which log records are being applied on the secondary replica.
+
+LastCommitTime: The last time a transaction was committed on the primary replica.
+
+By analyzing this data, you can identify the latency between the primary and secondary replicas, which helps in understanding 
+the data synchronization status and performance of the Always On availability group.
+
+
+<b style="font-size: 15px">Check Alwayson related errors from SQL Server logs:</b><br>
+EXEC xp_readerrorlog 0, 1, N'AlwaysOn';
+
+
+
+</pre>
+</body>
+</html>

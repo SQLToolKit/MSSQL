@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blocking</title>
+</head>
+<body>
+
+<pre style="font-family: verdana; font-size: 13px; margin:30px 30px 30px 30px">
+<h2>Identify blocking in the database</h2><hr>
+SELECT
+    blocking_session_id AS BlockingSessionID,
+    session_id AS BlockedSessionID,
+    wait_duration_ms AS WaitDurationMS,
+    wait_type AS WaitType,
+    resource_type AS ResourceType,
+    resource_description AS ResourceDescription,
+    program_name AS BlockedProgram,
+    sql_text AS BlockedSQLText
+FROM
+    sys.dm_exec_requests
+    CROSS APPLY sys.dm_exec_sql_text(plan_handle)
+WHERE
+    blocking_session_id > 0;
+
+</pre>
+</body>
+</html>
