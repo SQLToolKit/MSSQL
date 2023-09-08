@@ -1,1 +1,2 @@
 This is git demo
+Adding a line in demo file
