@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <link rel="stylesheet" href="./body_style.css"/>
+    <html lang="en">
+    <title>miscellaneous</title>
+</head>   
+<body>
+<pre>
+<h3 class="heading">Filter SQL Error log on date:</h3>
+<p class="sql">
+EXEC xp_readerrorlog 
+    0,                          --Log#
+    1,                          --Log type
+    N'',                        --String 1
+    N'',                        --String 2
+    N'2023-07-24 09:00',        -- Start Date/Time
+    N'2023-07-24 13:00',        -- End Date/Time
+    N'desc'
+</p>
+
+<h3 class="heading">Checking blocking:</h3>
+<p class="sql">
+SELECT
+    blocking_session_id AS BlockingSessionID,
+    session_id AS BlockedSessionID,
+    wait_duration_ms AS WaitDurationMS,
+    wait_type AS WaitType,
+    resource_type AS ResourceType,
+    resource_description AS ResourceDescription,
+    program_name AS BlockedProgram,
+    sql_text AS BlockedSQLText
+FROM
+    sys.dm_exec_requests
+    CROSS APPLY sys.dm_exec_sql_text(plan_handle)
+WHERE
+    blocking_session_id > 0;
+</p>
+ 
+<h3 class="heading">Check who is using TempDB:</h3>
+<p class="sql">
+USE tempdb;
+SELECT
+    DB_NAME(database_id) AS DatabaseName,
+    OBJECT_NAME(object_id, database_id) AS ObjectName,
+    type_desc AS ObjectType,
+    user_object_id,
+    session_id,
+    login_name,
+    reads,
+    writes,
+    logical_reads
+FROM
+    sys.dm_db_task_space_usage
+    INNER JOIN sys.dm_exec_sessions
+    ON session_id = session_id
+WHERE
+    database_id = DB_ID('tempdb')
+ORDER BY
+    reads + writes + logical_reads DESC;
+</p>
+
+<h3 class="heading">Check database size and free space:</h3>
+<p class="sql">
+SELECT 
+    name AS DatabaseName,
+    size * 8 / 1024 AS SizeMB,
+    CAST(FILEPROPERTY(name, 'SpaceUsed') AS INT) * 8 / 1024 AS UsedSpaceMB,
+    (size - CAST(FILEPROPERTY(name, 'SpaceUsed') AS INT)) * 8 / 1024 AS FreeSpaceMB,
+    state_desc AS State
+FROM 
+    sys.master_files
+WHERE 
+    type_desc = 'ROWS';
+</p>
+
+<h3 class="heading">Check SQL Services using TSQL:</h3>
+<p class="sql">
+SELECT servicename, service_account, status_desc, startup_type_desc
+FROM sys.dm_server_services
+GO
+</p>
+
+</pre>
+</body>
+</html>

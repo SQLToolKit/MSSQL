@@ -3,33 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./body_style.css"/>
     <title>AG Gap</title>
 </head>
 <body>
 
-<pre style="font-family: Calibri; font-size: 16px; margin:30px 30px 30px 30px">
-<h2>Troubleshoot Alwayson gap issues</h2><hr>
+<pre>
+<h3 class="heading">Troubleshoot Alwayson gap issues</h3>
 
-<b style="font-size: 15px">Check gap between primary and secondary replica:</b><br>
-   Replace 'YourDatabaseName' with the name of your database
+<p class="heading">Check gap between primary and secondary replica:</p>
+<sql>
+Replace 'YourDatabaseName' with the name of your database
     
-   DECLARE @DatabaseName NVARCHAR(128) = 'YourDatabaseName';
+DECLARE @DatabaseName NVARCHAR(128) = 'YourDatabaseName';
     
-   -- Get the last commit time on the primary replica
-   DECLARE @PrimaryLastCommitTime DATETIME;
-   SELECT @PrimaryLastCommitTime = last_commit_time
-   FROM sys.dm_hadr_database_replica_states
-   WHERE database_id = DB_ID(@DatabaseName) AND is_primary_replica = 1;
+-- Get the last commit time on the primary replica
+DECLARE @PrimaryLastCommitTime DATETIME;
+SELECT @PrimaryLastCommitTime = last_commit_time
+FROM sys.dm_hadr_database_replica_states
+WHERE database_id = DB_ID(@DatabaseName) AND is_primary_replica = 1;
     
-   -- Get the last commit time on each secondary replica
-   SELECT replica_server_name, last_commit_time,
-   DATEDIFF(SECOND, @PrimaryLastCommitTime, last_commit_time) AS SecondsBehindPrimary
-   FROM sys.dm_hadr_database_replica_states
-   WHERE database_id = DB_ID(@DatabaseName) AND is_primary_replica = 0;
+-- Get the last commit time on each secondary replica
+SELECT replica_server_name, last_commit_time,
+DATEDIFF(SECOND, @PrimaryLastCommitTime, last_commit_time) AS SecondsBehindPrimary
+FROM sys.dm_hadr_database_replica_states
+WHERE database_id = DB_ID(@DatabaseName) AND is_primary_replica = 0;
+</sql>
 
-
-<b style="font-size: 15px">Check the latency in Alwayson:</b><br>
-
+<p class="heading">Check the latency in Alwayson:</p>
+<sql>
 SELECT 
     ag.name AS AvailabilityGroupName,
     r.replica_server_name AS ReplicaServerName,
@@ -57,9 +59,9 @@ LEFT JOIN
 WHERE 
     d.database_id = DB_ID('YourDatabaseName'); -- Replace 'YourDatabaseName' with the name of your database
 
+</sql>
 
-
-<b>The columns in the result set are as follows: </b>
+<p class="text">The columns in the result set are as follows:</p>
 
 AvailabilityGroupName: The name of the Always On availability group.
 
@@ -87,11 +89,10 @@ By analyzing this data, you can identify the latency between the primary and sec
 the data synchronization status and performance of the Always On availability group.
 
 
-<b style="font-size: 15px">Check Alwayson related errors from SQL Server logs:</b><br>
+<p class="heading">Check Alwayson related errors from SQL Server logs:</p>
+<sql>
 EXEC xp_readerrorlog 0, 1, N'AlwaysOn';
-
-
-
+</sql>
 </pre>
 </body>
 </html>

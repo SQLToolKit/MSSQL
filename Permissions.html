@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <link rel="stylesheet" href="./body_style.css"/>
     <title>DB Permissions</title>
 </head>
 <body>
 
-<pre style="font-family: Calibri; font-size: 16px; margin:30px 30px 30px 30px">
-<h2>Check Instance and database permissions</h2><hr>
-
-<b style="font-family: verdana; font-size: 15px">Check permissions for database users:</b><br>
-USE YourDatabaseName; -- Replace 'YourDatabaseName' with the name of your database
-
+<pre>
+<h3 class="heading">Check permissions for database users:</h3>
+<p class="sql">
+USE YourDatabaseName;               --Replace your database name
 SELECT 
     DP.name AS UserName,
     DP.type_desc AS UserType,
@@ -20,7 +19,14 @@ SELECT
     DR.permission_name AS Permission,
     DO.name AS ObjectName,
     DO.type_desc AS ObjectType,
-    CASE WHEN DO.type_desc IN ('SQL_STORED_PROCEDURE', 'SQL_SCALAR_FUNCTION', 'SQL_TABLE_VALUED_FUNCTION', 'SQL_INLINE_TABLE_VALUED_FUNCTION') THEN dp2.name ELSE NULL END AS ParentObject,
+    CASE WHEN DO.type_desc IN 
+            ('SQL_STORED_PROCEDURE',
+            'SQL_SCALAR_FUNCTION',
+            'SQL_TABLE_VALUED_FUNCTION',
+            'SQL_INLINE_TABLE_VALUED_FUNCTION')
+        THEN dp2.name 
+    ELSE NULL 
+    END AS ParentObject,
     CASE WHEN DR.state_desc = 'GRANT_WITH_GRANT_OPTION' THEN 'YES' ELSE 'NO' END AS Grantable
 FROM 
     sys.database_principals DP
@@ -33,19 +39,21 @@ LEFT JOIN
 WHERE 
     DP.type_desc IN ('SQL_USER', 'WINDOWS_USER', 'WINDOWS_GROUP')
     AND DP.name NOT LIKE '##%##' -- Exclude internal users
-    AND DO.type_desc IN ('SQL_STORED_PROCEDURE', 'SQL_SCALAR_FUNCTION', 'SQL_TABLE_VALUED_FUNCTION', 'SQL_INLINE_TABLE_VALUED_FUNCTION', 'USER_TABLE', 'VIEW')
-ORDER BY 
-    DP.name, DR.permission_name, DO.name;
+    AND DO.type_desc IN ('SQL_STORED_PROCEDURE',
+                        'SQL_SCALAR_FUNCTION',
+                        'SQL_TABLE_VALUED_FUNCTION',
+                        'SQL_INLINE_TABLE_VALUED_FUNCTION',
+                        'USER_TABLE', 'VIEW')
+ORDER BY DP.name, DR.permission_name, DO.name;
+</p>
 
-
-<b style="font-family: verdana; font-size: 15px">Query to check roles assigned to database users: </b><br> 
-USE YourDatabaseName; -- Replace 'YourDatabaseName' with the name of your database
-
+<p class="heading">Check roles assigned to database users:</p>
+<p class="sql">
+USE YourDatabaseName;               --Replace your database name
 SELECT 
     DP.name AS UserName,
     DP.type_desc AS UserType,
-    USER_NAME(DRM.role_principal_id) AS RoleName,
-    DRM.type_desc AS RoleType
+    USER_NAME(DRM.role_principal_id) AS RoleName
 FROM 
     sys.database_principals DP
 LEFT JOIN 
@@ -58,7 +66,7 @@ WHERE
     AND RP.type_desc = 'DATABASE_ROLE'
 ORDER BY 
     DP.name, RP.name;
-    
+</p>
 </pre>
 </body>
 </html>

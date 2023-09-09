@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <link rel="stylesheet" href="./body_style.css" />
     <title>Troubleshoot T-Log</title>
 </head>
 <body>
 
-<pre style="font-family: Calibri; font-size: 16px; margin:30px 30px 30px 30px">
-<h2>Queries to troubleshoot transaction log issues</h2><hr>  
-
-<b style="font-size: 15px">Check the size of the transaction log:</b><br>
-USE YourDatabaseName; -- Replace 'YourDatabaseName' with the name of your database
+<pre>
+<h3 class="heading">Troubleshoot Transaction Log Issues</h3>
+<p class="sql">
+USE YourDatabaseName;           --Replace database name
 DBCC SQLPERF(LOGSPACE);
-
-
-<b style="font-size: 15px">Check the active transactions and their details:</b><br>
+</p>
+<h3 class="heading">Check the active transactions and their details:</h3>
+<p class="sql">
 DBCC OPENTRAN;
-
-
-<b style="font-size: 15px">Check the current log utilization:</b><br>
-USE YourDatabaseName; -- Replace 'YourDatabaseName' with the name of your database
+</p>
+<h3 class="heading">Check the current log utilization:</h3>
+<p class="sql box">
+USE YourDatabaseName;           -- Replace database name
 
 SELECT
     name AS LogicalFileName,
@@ -31,16 +31,16 @@ FROM
     sys.master_files
 WHERE
     database_id = DB_ID('YourDatabaseName') 
-    AND type_desc = 'LOG';
+    AND type_desc = 'LOG'
 
-
-<b style="font-size: 15px">Check for virtual log file (VLF) fragmentation:</b><br>
-DBCC LOGINFO;
-
-
-<b style="font-size: 15px">Check for autogrowth settings:</b><br>
-USE YourDatabaseName; -- Replace 'YourDatabaseName' with the name of your database
-
+</p>
+<h3 class="heading">Check for virtual log file (VLF) fragmentation:</h3>
+<p class="sql">
+    DBCC LOGINFO;
+</p>
+<h3 class="heading">Check for autogrowth settings:</h3>
+<p class="sql">
+USE YourDatabaseName; --Replace database name
 SELECT 
     name AS LogicalFileName,
     type_desc AS FileType,
@@ -51,9 +51,9 @@ FROM
 WHERE 
     database_id = DB_ID('YourDatabaseName') 
     AND type_desc = 'LOG';
-
-    
-<b style="font-size: 15px">Monitor long-running or blocking transactions:</b><br>
+</p>
+<h3 class="heading">Monitor long-running or blocking transactions:</h3>
+<p class="sql">
 SELECT
     r.session_id,
     r.status,
@@ -71,10 +71,11 @@ WHERE
     r.command LIKE 'INSERT%' OR
     r.command LIKE 'UPDATE%' OR
     r.command LIKE 'DELETE%' OR
-    r.command LIKE 'SELECT%' -- Adjust as needed for specific operations
+    r.command LIKE 'SELECT%'        --Adjust as needed for specific operations
 ORDER BY
     r.wait_time DESC;
-
+</p>
 </pre>
 </body>
+
 </html>

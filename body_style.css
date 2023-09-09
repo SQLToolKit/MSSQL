@@ -1,0 +1,78 @@
+* {
+    width: 90%;
+    background-color: #F5F5F5;
+    text-align: left;
+    margin-top: 30px;
+    margin-left: 40px;
+    /* font-family: 'Open Sans', sans-serif; */
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+.box {
+    border: 2px solid black;
+    width: 85%;  
+    background-color:lightgoldenrodyellow;
+}
+
+
+pre {
+    font-family: 'Segoe UI';
+    font-size: 16px;
+    word-wrap: break-word;
+    /* padding-left: 20px; */
+}
+
+.h3_main {
+    color: teal;
+    text-decoration: underline;
+    font-family: 'Segoe UI';
+}
+
+.heading {
+    font-family: 'Segoe UI';
+    font-size: 16px;
+    word-wrap: break-word;
+    font-weight: 550;
+    background-color:#151515;
+    color: whitesmoke;
+    padding: 6px;
+    margin: 0;
+    /* white-space: pre-line; */
+}
+
+.text {
+    font-family: 'Segoe UI';
+    font-size: 16px;
+    word-wrap: break-word;
+    padding: 0;
+    margin: 0;
+    /* white-space:pre; */
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.sql {
+    font-family: 'Courier New';
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+}
+
+.os {
+    font-family: 'Courier New';
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+}
+
+.note {
+    font-family: 'Segoe UI';
+    font-style: italic;
+    font-size: 15px;
+    color: brown;
+    padding: 0;
+    margin: 0;
+}
+

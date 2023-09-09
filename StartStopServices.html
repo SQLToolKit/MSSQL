@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
-    <title>SQLServices</title>
+    <link rel="stylesheet" href="./body_style.css"/>
+    <title>SQL Services</title>
 </head>
 <body>
-<pre style="font-family: Calibri; font-size: 16px; margin:30px 30px 30px 30px">
-<h2>Start/Stop MS SQL Server services using command line</h2><hr>
 
-<b>Start command line “As Administrator”. 
-Right click command line >> Run as administrator</b>
-
-
-<b>Check the SQL services names using below comman</b>
-
-<b>C:\WINDOWS\system32>tasklist /svc | find /i "sql"</b>
-sqlwriter.exe                  3812 SQLWriter
-sqlbrowser.exe               3872 SQLBrowser
-fdlauncher.exe                8676 MSSQLFDLauncher$MSSQLSERVER2016
-sqlservr.exe                   11964 MSSQL$MSSQLSERVER2016
-SQLAGENT.EXE               4004 SQLAgent$MSSQLSERVER2016
+<pre>
+<h3 class="heading">Start/Stop MS SQL Server services using command line</h3>
+<p class="text">Start command line “As Administrator”. 
+Right click command line >> Run as administrator</p>
 
 
-<b>Use windows NET interface to STOP/START services</b>
+<p class="text">Check the SQL services names using below comman</p>
+<p class="os">
+C:\WINDOWS\system32>tasklist /svc | find /i "sql"
+sqlwriter.exe                       3812 SQLWriter
+sqlbrowser.exe                      3872 SQLBrowser
+fdlauncher.exe                      8676 MSSQLFDLauncher$MSSQLSERVER2016
+sqlservr.exe                        11964 MSSQL$MSSQLSERVER2016
+SQLAGENT.EXE                        4004 SQLAgent$MSSQLSERVER2016
+</p>
 
-<b>C:\WINDOWS\system32>NET STOP MSSQL$MSSQLSERVER2016</b>
+<p class="heading">Use windows NET interface to STOP/START services</p>
+<p class="os">
+C:\WINDOWS\system32>NET STOP MSSQL$MSSQLSERVER2016
 The following services are dependent on the SQL Server (MSSQLSERVER2016) service.
 Stopping the SQL Server (MSSQLSERVER2016) service will also stop these services.
 
@@ -37,12 +39,12 @@ The SQL Server Agent (MSSQLSERVER2016) service was stopped successfully.
 
 The SQL Server (MSSQLSERVER2016) service is stopping.
 The SQL Server (MSSQLSERVER2016) service was stopped successfully.
+</p>
 
-<b>Note: Agent service is dependent on SQL database service, therefore it will also be stoped</b>
-
-<b>We can also provide “Y” option with NET stop command to stop SQL agent service</b>
-
-<b>C:\WINDOWS\system32>NET STOP MSSQL$MSSQLSERVER2016 /Y</b>
+<p class="note">Note: Agent service is dependent on SQL database service, therefore it will also be stoped</p>
+<p class="text bold">We can also provide “Y” option with NET stop command to stop SQL agent service</p>
+<p class="os">
+C:\WINDOWS\system32>NET STOP MSSQL$MSSQLSERVER2016 /Y
 
 The following services are dependent on the SQL Server (MSSQLSERVER2016) service.
 Stopping the SQL Server (MSSQLSERVER2016) service will also stop these services.
@@ -55,36 +57,31 @@ The SQL Server Agent (MSSQLSERVER2016) service was stopped successfully.
 The SQL Server (MSSQLSERVER2016) service is stopping.
 The SQL Server (MSSQLSERVER2016) service was stopped successfully.
 
-<b>C:\WINDOWS\system32>NET START MSSQL$MSSQLSERVER2016</b>
+C:\WINDOWS\system32>NET START MSSQL$MSSQLSERVER2016
 The SQL Server (MSSQLSERVER2016) service is starting.
 The SQL Server (MSSQLSERVER2016) service was started successfully.
+</p>
 
-
-
-<b>Similarly, you can start/stop agent service</b>
-
-<b>C:\WINDOWS\system32>NET START SQLAgent$MSSQLSERVER2016</b>
+<p class="text bold">Similarly, you can start/stop agent service</p>
+<p class="os">
+C:\WINDOWS\system32>NET START SQLAgent$MSSQLSERVER2016
 The SQL Server Agent (MSSQLSERVER2016) service is starting.
 The SQL Server Agent (MSSQLSERVER2016) service was started successfully.
+</p>
 
+<p class="heading">Stop SQL instance using TSQL</p>
 
-
-<b>Stop SQL instance using TSQL </b>
-
-<b>SHUTDOWN</b>
+<p class="text bold">SHUTDOWN</p>
 You can stop the SQL Server instance using T-SQL by executing the SHUTDOWN command. 
 The SHUTDOWN command gracefully stops the SQL Server instance and is equivalent to 
 stopping the SQL Server service.
 
-<b>SHUTDOWN [ WITH NOWAIT ]</b>
+<p class="text bold">SHUTDOWN [ WITH NOWAIT ]</p>
 The optional WITH NOWAIT clause specifies that the command should take effect immediately 
 without waiting for the connections to complete their transactions. 
 This is like "shutdown abort" in Oracle.
 
-
-
-
-
 </pre>
 </body>
+
 </html>
