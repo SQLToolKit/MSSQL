@@ -1,1 +1,0 @@
-This is for deletion test in Git local and remote repo
